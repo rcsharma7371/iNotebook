@@ -10,8 +10,9 @@ const router = express();
 
 // router.use(express.json);
 
-//Create a user using POST "/api/auth/sign-up" Creating first time No login required;
+//Create a user using POST "/api/auth/createuser" Creating first time No login required;
 const JWT_SECRET = "msd_Thala_07";
+
 router.post(
   "/createuser",[
   body("name", "Enter a valid name").isLength({ min: 5 }),
@@ -28,6 +29,7 @@ router.post(
       }
       //check user's email already registered or not
       let user = await User.findOne({ email: req.body.email });
+      console.log("Registered User",user)
       if (user) {
         return res.status(400).send("User Already registered");
       }
@@ -36,12 +38,12 @@ router.post(
 
 
       //Create a new user and save to db
-      user = User.create({
+      user = await User.create({
         name: req.body.name,
         email: req.body.email,
         password: secPass,
       });
-
+      
       const data = {
         id: user.id
       }
